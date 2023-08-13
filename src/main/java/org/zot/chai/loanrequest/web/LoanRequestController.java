@@ -21,19 +21,19 @@ public class LoanRequestController {
 
     @PostMapping("/v1/loans")
     public LoanRequestDto createLoanRequest(@RequestBody LoanRequestDto loanRequestDto){
-        logger.info("createLoanRequest => " + loanRequestDto);
+        logger.info("createLoanRequest => {}", loanRequestDto);
         return service.createLoanRequest(loanRequestDto);
     }
 
     @GetMapping("/v1/loans/{customerId}/total-loan")
     public LoanSummaryDto summeryLoan(@PathVariable Long customerId){
-        logger.info("summeryLoan => customerId := " + customerId);
+        logger.info("summeryLoan => customerId := {}", customerId);
         return service.sumTotalLoan(customerId);
     }
 
     @GetMapping("/v1/loans/customers/{customerId}/full-name")
     public String findCustomerFullNameById(@PathVariable Long customerId){
-        logger.info("findCustomerFullNameById => customerId := " + customerId);
+        logger.info("findCustomerFullNameById => customerId := {}", customerId);
         return service.findCustomerFullNameById(customerId);
     }
 }

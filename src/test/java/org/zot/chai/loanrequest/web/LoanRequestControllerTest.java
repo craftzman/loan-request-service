@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(LoanRequestController.class)
-public class LoanRequestControllerTest {
+class LoanRequestControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;

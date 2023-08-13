@@ -13,7 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-    Logger logger = LoggerFactory.getLogger(RestResponseEntityExceptionHandler.class);
+    Logger log = LoggerFactory.getLogger(RestResponseEntityExceptionHandler.class);
 
     @ExceptionHandler(value = {IllegalArgumentException.class, IllegalStateException.class, IncorrectCustomerNameException.class, ConversionFailedException.class})
     protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
@@ -31,7 +31,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
-        logger.info("Override exception \nex:=" + ex + "\nheaders:= " + headers + "\nstatus:=" + status + "\nrequest:=" + request);
+        log.info("Override exception \nex:={} \nheaders:= {} \nstatus:= {} \nrequest:= {}",ex , headers, status, request);
         ProblemDetail body = this.createProblemDetail(ex, status, ex.getMessage(), "detailMessageCode", (Object[]) null, request);
         return this.handleExceptionInternal(ex, body, headers, status, request);
     }

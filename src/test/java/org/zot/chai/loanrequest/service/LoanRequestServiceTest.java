@@ -22,7 +22,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class LoanRequestServiceTest {
+class LoanRequestServiceTest {
 
     @Mock
     LoanRequestRepository repository;
@@ -50,14 +50,14 @@ public class LoanRequestServiceTest {
     @DisplayName("Total loan amount of particular customer can be calculated")
     void calculate_total_loan_OK() {
         given(repository.sumLoanAmount(anyLong())).willReturn(1500d);
-        assertThat(service.sumTotalLoan(10L).loanAmount().compareTo(1500d));
+        assertThat(service.sumTotalLoan(10L).loanAmount().compareTo(1500d)).isEven();
     }
 
     @Test
     @DisplayName("Customer's full name can be retrieved from DB by a valid customer id")
     void find_customer_full_name_OK() {
         given(repository.findFullNameById(anyLong())).willReturn(Optional.of("name-in-db"));
-        assertThat(service.findCustomerFullNameById(100l).equalsIgnoreCase("name-in-db"));
+        assertThat(service.findCustomerFullNameById(100l)).isEqualToIgnoringCase("name-in-db");
     }
 
     @Test
@@ -70,8 +70,8 @@ public class LoanRequestServiceTest {
         Exception exception = assertThrows(IncorrectCustomerNameException.class,
                 () -> service.createLoanRequest(newLoanRequest));
 
-        assertThat(exception.getMessage().contains("Customer id + customer name is already existed; use another combination"));
-        assertThat(exception instanceof IncorrectCustomerNameException);
+        assertThat(exception.getMessage()).contains("Customer id + customer name is already existed; use another combination");
+        assertThat(exception).isInstanceOf(IncorrectCustomerNameException.class);
         verify(repository, never()).saveAll(any());
     }
 
@@ -83,8 +83,8 @@ public class LoanRequestServiceTest {
         Exception exception = assertThrows(CustomerIdNotFoundException.class,
                 () -> service.sumTotalLoan(10L));
 
-        assertThat(exception.getMessage().contains("Customer Id not found"));
-        assertThat(exception instanceof CustomerIdNotFoundException);
+        assertThat(exception.getMessage()).contains("Customer Id not found");
+        assertThat(exception).isInstanceOf(CustomerIdNotFoundException.class);
     }
 
 }

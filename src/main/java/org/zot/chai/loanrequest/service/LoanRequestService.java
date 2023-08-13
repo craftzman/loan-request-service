@@ -29,27 +29,26 @@ public class LoanRequestService {
     public LoanRequestDto createLoanRequest(LoanRequestDto dto) {
 
         // Find customer from id before checking full name
-        repository.findFullNameById(dto.customerId()).ifPresent((name) -> {
+        repository.findFullNameById(dto.customerId()).ifPresent(name -> {
             // Different customer full name with the same id is forbidden
             if(!name.equalsIgnoreCase(dto.customerFullName())) {
-                logger.error("createLoanRequest => customer id := " + dto.customerId() + " customer name := " + dto.customerFullName());
+                logger.error("createLoanRequest => customer id := {} customer name := {}", dto.customerId() ,dto.customerFullName());
                 throw new IncorrectCustomerNameException();
             }
         });
         // Unwind each amount into separate LoanRequest record and save.
         repository.saveAll(unwind.apply(dto));
-        logger.info("createLoanRequest => customer id := " + dto.customerId() +
-                " Loan amount := " + dto.amount());
+        logger.info("createLoanRequest => customer id := {} Loan amount := {}", dto.customerId(), dto.amount());
         return dto;
     }
 
     public LoanSummaryDto sumTotalLoan(Long customerId) {
         var sum = repository.sumLoanAmount(customerId);
         if(sum == 0){
-            logger.error("sumTotalLoan => customer id := " + customerId + " not found!");
+            logger.error("sumTotalLoan => customer id := {} not found!", customerId);
             throw new CustomerIdNotFoundException();
         }
-        logger.info("sumTotalLoan => customer id := " + customerId + " has total loan := " + sum);
+        logger.info("sumTotalLoan => customer id := {} has total loan := {}", customerId , sum);
         return new LoanSummaryDto(customerId, sum);
     }
 
@@ -64,10 +63,10 @@ public class LoanRequestService {
      * customerId
      * customerFullName
      */
-    private Function<LoanRequestDto, List<LoanRequest>> unwind = (lrd) -> {
+    private Function<LoanRequestDto, List<LoanRequest>> unwind = lrd -> {
         var loanRequests = new ArrayList<LoanRequest>();
 
-        lrd.amount().forEach((a) -> loanRequests.add(
+        lrd.amount().forEach(a -> loanRequests.add(
                 new LoanRequest.LoanRequestBuilder(a, lrd.customerId(), lrd.customerFullName())
                         .build()));
         return loanRequests;
