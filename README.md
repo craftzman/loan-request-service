@@ -22,9 +22,21 @@ Copy to location you desire or just run it directly from target folder
 ```bash
 java -jar loan-request-service-0.0.1-SNAPSHOT.jar
 ```
+### Run from Docker image
+#### image usage
+
+Run this command to build Docker image (Require docker running on your system)
+```
+mvn spring-boot:build-image
+```
+After the build process is done, then start an application image with this command
+```
+docker run --rm -p 8080:8080 loan-request-service:0.0.1-SNAPSHOT
+```
+
 #### Usage
 
-* After the project started the main url is [loan-request-service](http://localhost:8080)
+* After the project started the main url is [loan-request-service](http://localhost:8080/)
 
 * Project also provides [swagger page](http://localhost:8080/api/swagger-ui/index.html) here
 
@@ -32,7 +44,7 @@ java -jar loan-request-service-0.0.1-SNAPSHOT.jar
   - user = sa with no password
 
 ### APIs
-* [create loan](http://localhost:8080/v1/loans)
+* [create loan](http://localhost:8080/v1/loans) 
   - To create a new loan this information is required
     - a customer id `Long`
     - full name `String`
