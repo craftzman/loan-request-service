@@ -9,11 +9,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.zot.chai.loanrequest.service.LoanRequestService;
 
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -45,7 +48,6 @@ class LoanRequestControllerTest {
     void whenValidLoanRequest_thenReturn200() throws Exception {
 
         var request = new LoanRequestDto(1L,"Full-name", List.of(500D));
-
         mvc.perform(post("/v1/loans").contentType("application/json")
                         .param("loanRequestDto","true")
                         .content(objectMapper.writeValueAsString(request)))
@@ -68,6 +70,28 @@ class LoanRequestControllerTest {
         mvc.perform(get("/v1/loans/customers/1/full-name").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Full-Name"));
+    }
+
+    //@Test
+    // Record doesn't allow to create loan instance that violate validation logic
+    void whenInvalidLoanAmount_thenExpectException() throws Exception {
+        mvc.perform(post("/v1/loans")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new LoanRequestDto(1L,"name",List.of(50D))))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+                .andExpect(result -> assertEquals("Loan amount must be between '500' to '12000.50", result.getResolvedException().getMessage()));
+    }
+
+    @Test
+    void whenInvalidCustomerId_thenTotalLoan_throwException() throws Exception {
+        mvc.perform(get("/v1/loans/test/total-loan")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentTypeMismatchException))
+                .andExpect(result -> assertEquals("Failed to convert value of type 'java.lang.String' to required type 'java.lang.Long'; For input string: \"test\"",
+                        result.getResolvedException().getMessage()));
     }
 
 }
