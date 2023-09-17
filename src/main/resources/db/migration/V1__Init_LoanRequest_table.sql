@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS Loan
+(
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    amount DOUBLE PRECISION NOT NULL,
+    customer_id BIGINT,
+    customer_full_name VARCHAR(255)
+);

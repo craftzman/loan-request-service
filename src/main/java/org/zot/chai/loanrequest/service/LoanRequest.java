@@ -6,7 +6,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 
 @Entity
-@Table(name = "LoanRequests", indexes = @Index(columnList = "customer_id"))
+//@Table(name = "LoanRequests", indexes = @Index(columnList = "customer_id"))
+@Table(name = "Loan", indexes = @Index(columnList = "customer_id"))
 public class LoanRequest {
 
     public LoanRequest() {
@@ -19,7 +20,7 @@ public class LoanRequest {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Min(value = 500)
