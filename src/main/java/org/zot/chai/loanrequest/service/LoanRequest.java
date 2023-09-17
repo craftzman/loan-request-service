@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 
 @Entity
-//@Table(name = "LoanRequests", indexes = @Index(columnList = "customer_id"))
 @Table(name = "Loan", indexes = @Index(columnList = "customer_id"))
 public class LoanRequest {
 
