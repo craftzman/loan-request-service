@@ -68,9 +68,9 @@ public class LoanRequest {
             this.customerFullName = customerFullName;
         }
 
-        private Double amount;
-        private Long customerId;
-        private String customerFullName;
+        private final Double amount;
+        private final Long customerId;
+        private final String customerFullName;
 
         public LoanRequest build() {
             return new LoanRequest(this);
