@@ -2,12 +2,11 @@ package org.zot.chai.loanrequest.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.zot.chai.loanrequest.service.LoanRequestService;
@@ -17,15 +16,16 @@ import java.util.List;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class)
 @WebMvcTest(LoanRequestController.class)
+@AutoConfigureMockMvc
 class LoanRequestControllerTest {
 
     @Autowired
@@ -48,6 +48,9 @@ class LoanRequestControllerTest {
     void whenValidLoanRequest_thenReturn200() throws Exception {
 
         var request = new LoanRequestDto(1L,"Full-name", List.of(500D));
+
+        when(service.createLoanRequest(any())).thenReturn(request);
+
         mvc.perform(post("/v1/loans").contentType("application/json")
                         .param("loanRequestDto","true")
                         .content(objectMapper.writeValueAsString(request)))
@@ -58,7 +61,7 @@ class LoanRequestControllerTest {
     void whenValidCustomerId_thenReturnTotalAmount() throws Exception {
 
         var sum = new LoanSummaryDto(1L,100d);
-        given(service.sumTotalLoan(anyLong())).willReturn(sum);
+        when(service.sumTotalLoan(anyLong())).thenReturn(sum);
         mvc.perform(get("/v1/loans/1/total-loan").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(sum)));
@@ -66,7 +69,7 @@ class LoanRequestControllerTest {
 
     @Test
     void whenValidCustomerId_thenReturnCustomerName() throws Exception {
-        given(service.findCustomerFullNameById(anyLong())).willReturn("Full-Name");
+        when(service.findCustomerFullNameById(anyLong())).thenReturn("Full-Name");
         mvc.perform(get("/v1/loans/customers/1/full-name").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Full-Name"));
