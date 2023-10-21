@@ -45,7 +45,7 @@ class LoanRequestControllerTest {
     }
 
     @Test
-    void whenValidLoanRequest_thenReturn200() throws Exception {
+    void whenValidLoanRequest_thenReturn201() throws Exception {
 
         var request = new LoanRequestDto(1L,"Full-name", List.of(500D));
 
@@ -54,7 +54,7 @@ class LoanRequestControllerTest {
         mvc.perform(post("/v1/loans").contentType("application/json")
                         .param("loanRequestDto","true")
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test

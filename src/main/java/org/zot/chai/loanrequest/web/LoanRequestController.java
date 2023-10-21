@@ -2,6 +2,7 @@ package org.zot.chai.loanrequest.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.zot.chai.loanrequest.service.LoanRequestService;
 
@@ -19,6 +20,7 @@ public class LoanRequestController {
         return "Loan Service Landing page";
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/v1/loans")
     public LoanRequestDto createLoanRequest(@RequestBody LoanRequestDto loanRequestDto){
         logger.info("createLoanRequest => {}", loanRequestDto);
