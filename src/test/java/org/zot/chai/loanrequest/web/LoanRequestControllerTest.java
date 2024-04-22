@@ -51,7 +51,7 @@ class LoanRequestControllerTest {
         mvc.perform(post("/v1/loans").contentType("application/json")
                         .param("loanRequestDto","true")
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test

@@ -5,12 +5,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     Logger log = LoggerFactory.getLogger(RestResponseEntityExceptionHandler.class);
@@ -22,7 +23,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     @ExceptionHandler(RuntimeException.class)
-    //@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<Object> handleAllUncaughtException(RuntimeException exception, WebRequest request) {
         String bodyOfResponse = "Internal Server Error" + exception.getMessage();
         return handleExceptionInternal(exception, bodyOfResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
