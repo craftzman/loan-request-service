@@ -87,4 +87,53 @@ class LoanRequestServiceTest {
         assertThat(exception).isInstanceOf(CustomerIdNotFoundException.class);
     }
 
+//    @Test
+//    @DisplayName("LoanRequest will not be saved when customer id is not found")
+//    void save_with_non_existent_customer_id_KO() {
+//        var newLoanRequest = new LoanRequestDto(999L, "non-existent-name", List.of(1000d));
+//        given(repository.findFullNameById(anyLong())).willReturn(Optional.empty());
+//
+//        Exception exception = assertThrows(CustomerIdNotFoundException.class,
+//                () -> service.createLoanRequest(newLoanRequest));
+//
+//        assertThat(exception.getMessage()).contains("Customer Id not found");
+//        assertThat(exception).isInstanceOf(CustomerIdNotFoundException.class);
+//        verify(repository, never()).saveAll(any());
+//    }
+
+    @Test
+    @DisplayName("LoanRequest will be saved when customer id and name are valid")
+    void save_with_valid_customer_id_and_name_OK() {
+        var newLoanRequest = new LoanRequestDto(1L, "valid-name", List.of(1000d, 2000d));
+        given(repository.findFullNameById(anyLong())).willReturn(Optional.of("valid-name"));
+
+        service.createLoanRequest(newLoanRequest);
+
+        verify(repository, times(1)).saveAll(any());
+    }
+
+    @Test
+    @DisplayName("Total loan amount is zero when no loans exist for customer")
+    void calculate_total_loan_no_loans_OK() {
+        given(repository.sumLoanAmount(anyLong())).willReturn(0d);
+
+        Exception exception = assertThrows(CustomerIdNotFoundException.class,
+                () -> service.sumTotalLoan(1L));
+
+        assertThat(exception.getMessage()).contains("Customer Id not found");
+        assertThat(exception).isInstanceOf(CustomerIdNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("Customer's full name retrieval throws exception for invalid customer id")
+    void find_customer_full_name_invalid_customer_id_KO() {
+        given(repository.findFullNameById(anyLong())).willReturn(Optional.empty());
+
+        Exception exception = assertThrows(CustomerIdNotFoundException.class,
+                () -> service.findCustomerFullNameById(999L));
+
+        assertThat(exception.getMessage()).contains("Customer Id not found");
+        assertThat(exception).isInstanceOf(CustomerIdNotFoundException.class);
+    }
+
 }
